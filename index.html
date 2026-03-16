@@ -30,6 +30,7 @@
             padding: 40px 30px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.5s ease;
+            position: relative;
         }
 
         @keyframes slideUp {
@@ -65,6 +66,21 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 1.1em;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
         }
 
         .stats-grid {
@@ -125,6 +141,12 @@
             word-break: break-word;
         }
 
+        .description {
+            margin-top: 10px;
+            color: #666;
+            font-style: italic;
+        }
+
         .participants-section {
             background: white;
             border-radius: 20px;
@@ -179,6 +201,11 @@
             color: #333;
         }
 
+        .participant-date {
+            color: #999;
+            font-size: 0.8em;
+        }
+
         .pick-button {
             width: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -222,6 +249,30 @@
             100% { transform: scale(1); }
         }
 
+        .winners-list {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            border-radius: 30px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .winners-title {
+            color: white;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .winner-item {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
         .winner-label {
             color: white;
             font-size: 1.2em;
@@ -241,7 +292,6 @@
             width: 10px;
             height: 10px;
             background: #f00;
-            position: fixed;
             top: -10px;
             animation: fall linear forwards;
             z-index: 1000;
@@ -251,6 +301,12 @@
             to {
                 transform: translateY(100vh) rotate(720deg);
             }
+        }
+
+        .no-giveaway {
+            text-align: center;
+            padding: 40px;
+            color: #666;
         }
 
         .hidden {
@@ -265,7 +321,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="container">
         <h1>
             <span>🎲</span>
             LuckyMax
@@ -273,102 +329,183 @@
         </h1>
         <div class="subtitle">Честные розыгрыши в MAX</div>
 
-        <!-- Статистика -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="participantsCount">0</div>
-                <div class="stat-label">участников</div>
+        <div id="loading" class="loading">Загрузка данных...</div>
+        <div id="error" class="error-message hidden"></div>
+        
+        <div id="content" class="hidden">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="participantsCount">0</div>
+                    <div class="stat-label">участников</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="winnersCount">1</div>
+                    <div class="stat-label">победителей</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="timeLeft">∞</div>
+                    <div class="stat-label">осталось</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="winnersCount">1</div>
-                <div class="stat-label">победителей</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="timeLeft">∞</div>
-                <div class="stat-label">осталось</div>
-            </div>
-        </div>
 
-        <!-- Приз -->
-        <div class="prize-section">
-            <div class="prize-title">🎁 Главный приз</div>
-            <div class="prize-name" id="prize">iPhone 15 Pro Max</div>
-        </div>
-
-        <!-- Список участников -->
-        <div class="participants-section">
-            <div class="section-title">
-                <span>👥</span>
-                Участники розыгрыша
+            <div class="prize-section">
+                <div class="prize-title">🎁 Главный приз</div>
+                <div class="prize-name" id="prize">Загрузка...</div>
+                <div class="description" id="description"></div>
             </div>
-            <div class="participants-list" id="participantsList">
-                <div class="participant-item">
-                    <div class="participant-avatar">A</div>
-                    <div class="participant-name">Алексей</div>
+
+            <div class="participants-section">
+                <div class="section-title">
+                    <span>👥</span>
+                    Участники розыгрыша
                 </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">М</div>
-                    <div class="participant-name">Мария</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">Д</div>
-                    <div class="participant-name">Дмитрий</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">Е</div>
-                    <div class="participant-name">Елена</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">И</div>
-                    <div class="participant-name">Иван</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">О</div>
-                    <div class="participant-name">Ольга</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">П</div>
-                    <div class="participant-name">Павел</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">Н</div>
-                    <div class="participant-name">Наталья</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">С</div>
-                    <div class="participant-name">Сергей</div>
-                </div>
-                <div class="participant-item">
-                    <div class="participant-avatar">А</div>
-                    <div class="participant-name">Анна</div>
+                <div class="participants-list" id="participantsList">
+                    <div class="participant-item">
+                        <div class="participant-avatar">?</div>
+                        <div class="participant-name">Загрузка...</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Кнопка выбора победителя -->
-        <button class="pick-button" onclick="pickWinner()" id="pickBtn">
-            <span>🎲</span>
-            Выбрать победителя
-            <span>🎲</span>
-        </button>
+            <div id="activeButtons">
+                <button class="pick-button" onclick="window.open('https://max.ru/id602504669009_2_bot', '_blank')">
+                    <span>🎲</span>
+                    Перейти к боту
+                    <span>🎲</span>
+                </button>
+            </div>
 
-        <!-- Карточка победителя (скрыта) -->
-        <div id="winnerCard" class="winner-card hidden">
-            <div class="winner-label">🏆 ПОБЕДИТЕЛЬ 🏆</div>
-            <div class="winner-name" id="winnerName">Имя</div>
+            <div id="winnersBlock" class="hidden">
+                <div class="winners-list" id="winnersList">
+                    <div class="winners-title">🏆 ПОБЕДИТЕЛИ 🏆</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const participants = [
-            "Алексей", "Мария", "Дмитрий", "Елена", "Иван",
-            "Ольга", "Павел", "Наталья", "Сергей", "Анна"
-        ];
+        // Получаем ID розыгрыша из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const giveawayId = urlParams.get('id');
+        
+        const API_BASE = 'http://176.113.83.39:8000';
 
-        // Обновляем счётчик
-        document.getElementById('participantsCount').textContent = participants.length;
+        async function loadGiveaway() {
+            if (!giveawayId) {
+                showNoGiveaway();
+                return;
+            }
 
-        // Функция для конфетти
+            try {
+                // Загружаем информацию о розыгрыше
+                const giveawayResponse = await fetch(`${API_BASE}/api/giveaway?id=${giveawayId}`);
+                if (!giveawayResponse.ok) {
+                    throw new Error('Розыгрыш не найден');
+                }
+                const giveaway = await giveawayResponse.json();
+
+                // Загружаем участников
+                const participantsResponse = await fetch(`${API_BASE}/api/participants?id=${giveawayId}`);
+                const participants = await participantsResponse.json();
+
+                renderGiveaway(giveaway, participants);
+                
+                // Обновляем время каждую минуту
+                startTimer(giveaway.end_date);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function renderGiveaway(giveaway, participants) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+
+            // Основная информация
+            document.getElementById('participantsCount').textContent = participants.length;
+            document.getElementById('winnersCount').textContent = giveaway.max_winners;
+            document.getElementById('prize').textContent = giveaway.prize;
+            document.getElementById('description').textContent = giveaway.description || '';
+
+            // Участники
+            const participantsList = document.getElementById('participantsList');
+            if (participants.length === 0) {
+                participantsList.innerHTML = '<div class="participant-item">👥 Пока нет участников</div>';
+            } else {
+                participantsList.innerHTML = participants.map(p => {
+                    const avatar = p.username ? p.username[0].toUpperCase() : '👤';
+                    const date = new Date(p.joined_at).toLocaleString('ru-RU', {
+                        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                    });
+                    return `
+                        <div class="participant-item">
+                            <div class="participant-avatar">${avatar}</div>
+                            <div class="participant-name">${p.username || 'Аноним'}</div>
+                            <div class="participant-date">${date}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Если розыгрыш завершён, показываем победителей
+            if (giveaway.status === 'finished' && giveaway.winners.length > 0) {
+                document.getElementById('activeButtons').classList.add('hidden');
+                document.getElementById('winnersBlock').classList.remove('hidden');
+                
+                const winnersList = document.getElementById('winnersList');
+                winnersList.innerHTML = '<div class="winners-title">🏆 ПОБЕДИТЕЛИ 🏆</div>';
+                
+                giveaway.winners.forEach(winner => {
+                    winnersList.innerHTML += `
+                        <div class="winner-item">
+                            🎉 ${winner.username || 'Пользователь ' + winner.user_id} 🎉
+                        </div>
+                    `;
+                });
+                
+                createConfetti();
+            }
+        }
+
+        function startTimer(endDateStr) {
+            const endDate = new Date(endDateStr);
+            const timeLeftEl = document.getElementById('timeLeft');
+            
+            function update() {
+                const now = new Date();
+                const diff = endDate - now;
+                
+                if (diff <= 0) {
+                    timeLeftEl.textContent = 'Завершён';
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                timeLeftEl.textContent = `${hours}ч ${minutes}м`;
+            }
+            
+            update();
+            setInterval(update, 60000);
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').textContent = `❌ ${message}`;
+        }
+
+        function showNoGiveaway() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = `
+                ❌ Розыгрыш не указан<br>
+                <small>Добавь ?id=НОМЕР к ссылке</small>
+            `;
+        }
+
         function createConfetti() {
             const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
             for (let i = 0; i < 100; i++) {
@@ -387,39 +524,8 @@
             }
         }
 
-        // Функция выбора победителя
-        function pickWinner() {
-            const winnerIndex = Math.floor(Math.random() * participants.length);
-            const winner = participants[winnerIndex];
-
-            // Показываем карточку победителя
-            document.getElementById('winnerName').textContent = winner;
-            document.getElementById('winnerCard').classList.remove('hidden');
-
-            // Блокируем кнопку
-            const btn = document.getElementById('pickBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span>🎉</span> Победитель выбран! <span>🎉</span>';
-
-            // Запускаем конфетти
-            createConfetti();
-
-            // Плавная прокрутка к победителю
-            setTimeout(() => {
-                document.getElementById('winnerCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-        }
-
-        // Обновляем время (для демо)
-        function updateTimeLeft() {
-            const timeLeft = document.getElementById('timeLeft');
-            const hours = Math.floor(Math.random() * 24);
-            const minutes = Math.floor(Math.random() * 60);
-            timeLeft.textContent = `${hours}ч ${minutes}м`;
-        }
-
-        updateTimeLeft();
-        setInterval(updateTimeLeft, 60000);
+        // Запускаем загрузку
+        loadGiveaway();
     </script>
 </body>
 </html>
