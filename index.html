@@ -388,6 +388,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const giveawayId = urlParams.get('id');
         
+        // 🔥 ИСПРАВЛЕНО: используем HTTPS
         const API_BASE = 'https://176.113.83.39';
 
         async function loadGiveaway() {
@@ -397,20 +398,16 @@
             }
 
             try {
-                // Загружаем информацию о розыгрыше
                 const giveawayResponse = await fetch(`${API_BASE}/api/giveaway?id=${giveawayId}`);
                 if (!giveawayResponse.ok) {
                     throw new Error('Розыгрыш не найден');
                 }
                 const giveaway = await giveawayResponse.json();
 
-                // Загружаем участников
                 const participantsResponse = await fetch(`${API_BASE}/api/participants?id=${giveawayId}`);
                 const participants = await participantsResponse.json();
 
                 renderGiveaway(giveaway, participants);
-                
-                // Обновляем время каждую минуту
                 startTimer(giveaway.end_date);
                 
             } catch (error) {
@@ -422,13 +419,11 @@
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('content').classList.remove('hidden');
 
-            // Основная информация
             document.getElementById('participantsCount').textContent = participants.length;
             document.getElementById('winnersCount').textContent = giveaway.max_winners;
             document.getElementById('prize').textContent = giveaway.prize;
             document.getElementById('description').textContent = giveaway.description || '';
 
-            // Участники
             const participantsList = document.getElementById('participantsList');
             if (participants.length === 0) {
                 participantsList.innerHTML = '<div class="participant-item">👥 Пока нет участников</div>';
@@ -448,7 +443,6 @@
                 }).join('');
             }
 
-            // Если розыгрыш завершён, показываем победителей
             if (giveaway.status === 'finished' && giveaway.winners.length > 0) {
                 document.getElementById('activeButtons').classList.add('hidden');
                 document.getElementById('winnersBlock').classList.remove('hidden');
@@ -524,7 +518,6 @@
             }
         }
 
-        // Запускаем загрузку
         loadGiveaway();
     </script>
 </body>
