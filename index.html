@@ -194,7 +194,6 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            text-transform: uppercase;
         }
 
         .participant-name {
@@ -332,7 +331,7 @@
 
         <div id="loading" class="loading">Загрузка данных...</div>
         <div id="error" class="error-message hidden"></div>
-
+        
         <div id="content" class="hidden">
             <div class="stats-grid">
                 <div class="stat-card">
@@ -388,8 +387,8 @@
         // Получаем ID розыгрыша из URL
         const urlParams = new URLSearchParams(window.location.search);
         const giveawayId = urlParams.get('id');
-
-        // 🔥 ВРЕМЕННО ИСПОЛЬЗУЕМ HTTP (пока нет HTTPS)
+        
+        // 🔥 ИСПРАВЛЕНО: используем HTTPS
         const API_BASE = 'http://176.113.83.39';
 
         async function loadGiveaway() {
@@ -410,7 +409,7 @@
 
                 renderGiveaway(giveaway, participants);
                 startTimer(giveaway.end_date);
-
+                
             } catch (error) {
                 showError(error.message);
             }
@@ -425,45 +424,40 @@
             document.getElementById('prize').textContent = giveaway.prize;
             document.getElementById('description').textContent = giveaway.description || '';
 
-            // Отображаем участников
             const participantsList = document.getElementById('participantsList');
             if (participants.length === 0) {
                 participantsList.innerHTML = '<div class="participant-item">👥 Пока нет участников</div>';
             } else {
                 participantsList.innerHTML = participants.map(p => {
-                    // 🔥 ФИКС: показываем user_id, если нет username
-                    const displayName = p.username || `Участник ${p.user_id}`;
-                    const avatar = displayName[0].toUpperCase();
+                    const avatar = p.username ? p.username[0].toUpperCase() : '👤';
                     const date = new Date(p.joined_at).toLocaleString('ru-RU', {
                         day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
                     });
                     return `
                         <div class="participant-item">
                             <div class="participant-avatar">${avatar}</div>
-                            <div class="participant-name">${displayName}</div>
+                            <div class="participant-name">${p.username || 'Аноним'}</div>
                             <div class="participant-date">${date}</div>
                         </div>
                     `;
                 }).join('');
             }
 
-            // Если розыгрыш завершён, показываем победителей
             if (giveaway.status === 'finished' && giveaway.winners.length > 0) {
                 document.getElementById('activeButtons').classList.add('hidden');
                 document.getElementById('winnersBlock').classList.remove('hidden');
-
+                
                 const winnersList = document.getElementById('winnersList');
                 winnersList.innerHTML = '<div class="winners-title">🏆 ПОБЕДИТЕЛИ 🏆</div>';
-
+                
                 giveaway.winners.forEach(winner => {
-                    const winnerName = winner.username || `Участник ${winner.user_id}`;
                     winnersList.innerHTML += `
                         <div class="winner-item">
-                            🎉 ${winnerName} 🎉
+                            🎉 ${winner.username || 'Пользователь ' + winner.user_id} 🎉
                         </div>
                     `;
                 });
-
+                
                 createConfetti();
             }
         }
@@ -471,22 +465,22 @@
         function startTimer(endDateStr) {
             const endDate = new Date(endDateStr);
             const timeLeftEl = document.getElementById('timeLeft');
-
+            
             function update() {
                 const now = new Date();
                 const diff = endDate - now;
-
+                
                 if (diff <= 0) {
                     timeLeftEl.textContent = 'Завершён';
                     return;
                 }
-
+                
                 const hours = Math.floor(diff / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
+                
                 timeLeftEl.textContent = `${hours}ч ${minutes}м`;
             }
-
+            
             update();
             setInterval(update, 60000);
         }
@@ -518,7 +512,7 @@
                     confetti.style.height = confetti.style.width;
                     confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
                     document.body.appendChild(confetti);
-
+                    
                     setTimeout(() => confetti.remove(), 4000);
                 }, i * 10);
             }
